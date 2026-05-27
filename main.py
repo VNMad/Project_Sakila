@@ -1,16 +1,35 @@
-# This is a sample Python script.
+import pymysql
+import os
+from pymysql.cursors import DictCursor
+from dotenv import load_dotenv
+from settings import MYSQL_CONFIG
+from sql_queries import *
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+load_dotenv('.env')
+
+try:
+    with pymysql.connect(**MYSQL_CONFIG, cursorclass=DictCursor) as conn_ich:
+        print('Connection opened')
+        try:
+            with conn_ich.cursor() as cursor:
+                #cursor.execute(GET_CATEGORIES)
+                #cursor.execute(GET_YEAR_RANGE)
+                #cursor.execute(SEARCH_FILMS_BY_KEYWORD, ("%academy%", 10, 0))
+                cursor.execute(SEARCH_BY_CATEGORY_AND_YEAR, (15, 2000, 2026, 10, 0))
+                for num, row in enumerate(cursor.fetchall(), 1):
+                    fields = ", ".join([f"{key}: {val}" for key, val in row.items()])
+                    print(f"{num}. {fields}")
+        except pymysql.MySQLError as e:
+            print("Query error:", e)
+
+except pymysql.MySQLError as e:
+    print("Connection error:", e)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+
+# if __name__ == '__main__':
+#     main()
