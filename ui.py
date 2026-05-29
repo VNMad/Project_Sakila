@@ -1,0 +1,223 @@
+import sys
+
+from mysql_client import DB
+from mongo_client import MongoDB
+from errors import handle_errors
+
+
+def print_films(films):
+    if not films:
+        print('No movies found for your request.')
+        return
+    for film in films:
+        print(
+            ('=' * 130) + '\n'
+            + f"ID          : {film['film_id']}\n"
+            + f"Title       : {film['title']}\n"
+            + f"Year        : {film['release_year']}\n"
+            + f"Category    : {film['categories']}\n"
+            + f"Language    : {film['language_name']}\n"
+            + f"Description : {film['description']}\n"
+            + ('=' * 130)
+        )
+
+def paginate_movies(search_function):
+    limit = 10
+    offset = 0
+    while True:
+        films = search_function(limit, offset,)
+        if not films:
+            if offset == 0:
+                print('No movies found for your request..')
+            break
+        print_films(films)
+        answer = input('Show next page? y/n: ').lower()
+        if answer != 'y':
+            break
+        offset += limit
+
+def print_popular_searches(searches):
+    if not searches:
+        print('Search history is empty.')
+        return
+    separator = '-' * 100
+    for search in searches:
+        if 'count' in search:
+            search_type = search['_id']['search_type']
+            value = search['_id']['value']
+            count = search['count']
+            extra_info = f'Count: {count}'
+
+        else:
+            search_type = search['search_type']
+            value = search['value']
+            date = search['created_at'].strftime('%Y-%m-%d %H:%M')
+            extra_info = f'Date: {date}'
+        if search_type == 'keyword':
+            formatted_value = value
+        elif search_type == 'genre':
+            formatted_value = value
+        elif search_type == 'year':
+            formatted_value = (
+                f"{value['start_year']} - "
+                f"{value['end_year']}"
+            )
+        elif search_type == 'genre_year':
+            formatted_value = (
+                f"{value['category']} | "
+                f"{value['start_year']} - "
+                f"{value['end_year']}"
+            )
+        else:
+            formatted_value = value
+
+        print(
+            f"{separator}\n"
+            f"Type  : {search_type}\n"
+            f"Value : {formatted_value}\n"
+            f"{extra_info}\n"
+            f"{separator}"
+        )
+
+@handle_errors
+def handle_search_keyword_movies():
+    keyword = input('Enter keyword: ').strip()
+    with DB() as db, MongoDB() as mongo:
+        mongo.save_search('keyword', keyword,)
+        paginate_movies(lambda limit, offset:
+                db.search_by_keyword(keyword, limit, offset,))
+
+
+@handle_errors
+def handle_search_genre_movies():
+    with DB() as db, MongoDB() as mongo:
+        categories = db.get_categories()
+        for category in categories:
+            print(category['category_id'], category['name'])
+        category_id = int(input('Enter category id: '))
+        ############################## добавляем наименование жанра вместо его кода
+        selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
+        mongo.save_search('genre', selected_category,)
+        ############################## добавляем наименование жанра вместо его кода
+        #mongo.save_search('genre', category_id,)
+        paginate_movies(lambda limit, offset:
+                db.search_by_category(category_id, limit, offset,))
+
+
+@handle_errors
+def handle_search_year_movies():
+    with DB() as db, MongoDB() as mongo:
+        year_range = db.get_year_range()
+        print('Available years:', year_range['min_year'],'-', year_range['max_year'])
+        start_year = int(input('Enter start year: '))
+        end_year = int(input('Enter end year: '))
+        mongo.save_search('year',{'start_year': start_year, 'end_year': end_year,})
+        categories = db.get_categories()
+        first_category = categories[0]['category_id']
+        paginate_movies(lambda limit, offset:
+                db.search_by_category_and_year(first_category, start_year, end_year, limit, offset,))
+
+
+@handle_errors
+def handle_search_movies():
+    with DB() as db, MongoDB() as mongo:
+        categories = db.get_categories()
+        for category in categories:
+            print(category['category_id'], category['name'])
+        category_id = int(input('Enter category id: '))
+        year_range = db.get_year_range()
+        print('Available years:', year_range['min_year'],'-', year_range['max_year'])
+        start_year = int(input('Enter start year: '))
+        end_year = int(input('Enter end year: '))
+        selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
+        mongo.save_search('genre_year',{
+                'category': selected_category,
+                'start_year': start_year,
+                'end_year': end_year,
+            }
+        )
+        paginate_movies(lambda limit, offset:
+                db.search_by_category_and_year(category_id, start_year, end_year, limit, offset,))
+
+
+@handle_errors
+def handle_popular_top_queries():
+    with MongoDB() as mongo:
+        searches = mongo.get_top_searches()
+        print_popular_searches(searches)
+        # # if not searches:
+        # #     print('Search history for the top movies is empty.')
+        # #     return
+        # for search in searches:
+        #     print(
+        #         f"Type: "
+        #         f"{search['_id']['search_type']} | "
+        #         f"Value: "
+        #         f"{search['_id']['value']} | "
+        #         f"Count: "
+        #         f"{search['count']}"
+        #     )
+
+
+@handle_errors
+def handle_popular_last_queries():
+    with MongoDB() as mongo:
+        searches = mongo.get_recent_searches()
+        print_popular_searches(searches)
+        # # if not searches:
+        # #     print('Search history for the popular movies is empty.')
+        # #     return
+        # for search in searches:
+        #     print(
+        #         f"Type: {search['search_type']} | "
+        #         f"Value: {search['value']} | "
+        #         f"Date: {search['created_at']}"
+        #     )
+
+
+menu_config = {
+    'title': 'Main menu',
+    'items': {
+        '1': {'text': 'Search movies',
+            'submenu': {'title': 'Movies search menu',
+                'items': {
+                    '1': {'text': 'Search by keyword', 'action': handle_search_keyword_movies,},
+                    '2': {'text': 'Search by genre', 'action': handle_search_genre_movies,},
+                    '3': {'text': 'Search by year', 'action': handle_search_year_movies,},
+                    '4': {'text': 'Search by genre and year', 'action': handle_search_movies,},
+                    '0': {'text': 'Back', 'action': 'back',},
+                         }
+                       }
+             },
+        '2': {'text': 'Popular searches',
+            'submenu': {'title': 'Popular searches menu',
+                'items': {
+                    '1': {'text': 'Last 10 searches', 'action': handle_popular_last_queries,},
+                    '2': {'text': 'Top 5 searches', 'action': handle_popular_top_queries,},
+                    '0': {'text': 'Back', 'action': 'back',},
+                         }
+                       }
+             },
+        '0': {'text': 'Exit', 'action': lambda: sys.exit(0),}
+    }
+}
+
+
+def run_menu(config):
+    stack = [config]
+    while stack:
+        current_menu = stack[-1]
+        print(f'\n{current_menu["title"]}')
+        for key, value in (current_menu['items'].items()):
+            print(f'{key}. {value["text"]}')
+        choice = input('Choose menu item: ')
+        if choice in current_menu['items']:
+            menu_item = (current_menu['items'][choice])
+            if menu_item.get('action') == 'back':
+                stack.pop()
+            elif 'submenu' in menu_item:
+                stack.append(menu_item['submenu'])
+            elif 'action' in menu_item:
+                menu_item['action']()
+        else:
+            print('Invalid menu option. Please choose from the options above.')
