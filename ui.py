@@ -2,7 +2,7 @@ import sys
 
 from mysql_client import DB
 from mongo_client import MongoDB
-from errors import handle_errors
+from logger import logger_decorator
 
 
 def print_films(films):
@@ -79,7 +79,7 @@ def print_popular_searches(searches):
             f"{separator}"
         )
 
-@handle_errors
+@logger_decorator
 def handle_search_keyword_movies():
     keyword = input('Enter keyword: ').strip()
     with DB() as db, MongoDB() as mongo:
@@ -88,7 +88,7 @@ def handle_search_keyword_movies():
                 db.search_by_keyword(keyword, limit, offset,))
 
 
-@handle_errors
+@logger_decorator
 def handle_search_genre_movies():
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
@@ -104,7 +104,7 @@ def handle_search_genre_movies():
                 db.search_by_category(category_id, limit, offset,))
 
 
-@handle_errors
+@logger_decorator
 def handle_search_year_movies():
     with DB() as db, MongoDB() as mongo:
         year_range = db.get_year_range()
@@ -118,7 +118,7 @@ def handle_search_year_movies():
                 db.search_by_category_and_year(first_category, start_year, end_year, limit, offset,))
 
 
-@handle_errors
+@logger_decorator
 def handle_search_movies():
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
@@ -140,7 +140,7 @@ def handle_search_movies():
                 db.search_by_category_and_year(category_id, start_year, end_year, limit, offset,))
 
 
-@handle_errors
+@logger_decorator
 def handle_popular_top_queries():
     with MongoDB() as mongo:
         searches = mongo.get_top_searches()
@@ -159,7 +159,7 @@ def handle_popular_top_queries():
         #     )
 
 
-@handle_errors
+@logger_decorator
 def handle_popular_last_queries():
     with MongoDB() as mongo:
         searches = mongo.get_recent_searches()
@@ -181,7 +181,7 @@ menu_config = {
         '1': {'text': 'Search movies',
             'submenu': {'title': 'Movies search menu',
                 'items': {
-                    '1': {'text': 'Search by keyword', 'action': handle_search_keyword_movies,},
+                    '1': {'text': 'Search by keyword in title', 'action': handle_search_keyword_movies,},
                     '2': {'text': 'Search by genre', 'action': handle_search_genre_movies,},
                     '3': {'text': 'Search by year', 'action': handle_search_year_movies,},
                     '4': {'text': 'Search by genre and year', 'action': handle_search_movies,},
