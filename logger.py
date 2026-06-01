@@ -43,7 +43,7 @@ def logger_decorator(func):
             print(e)
         except MySQLError as e:
             logger.exception(e)
-            print('Database error.')
+            print('Database MySQL error.')
         except mongo_errors.ConnectionFailure as e:
             logger.exception(e)
             print('MongoDB connection error.')
