@@ -4,12 +4,7 @@ from functools import wraps
 from pymysql import MySQLError
 from pymongo import errors as mongo_errors
 
-from errors import (
-    MoviesPublishedYearError,
-    CategoryNotFoundError,
-    InvalidMenuChoiceError,
-    InvalidYearRangeError,
-)
+from errors import (MoviesPublishedYearError, CategoryNotFoundError, InvalidMenuChoiceError, InvalidYearRangeError)
 
 
 logging.basicConfig(

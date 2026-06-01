@@ -26,7 +26,7 @@ def paginate_movies(search_function):
     limit = 10
     offset = 0
     while True:
-        films = search_function(limit, offset,)
+        films = search_function(limit, offset)
         if not films:
             if offset == 0:
                 print('No movies found for your request..')
@@ -86,7 +86,7 @@ def handle_search_keyword_movies():
     with DB() as db, MongoDB() as mongo:
         mongo.save_search('keyword', keyword,)
         paginate_movies(lambda limit, offset:
-                db.search_by_keyword(keyword, limit, offset,))
+                db.search_by_keyword(keyword, limit, offset))
 
 
 @logger_decorator
@@ -96,14 +96,11 @@ def handle_search_genre_movies():
         for category in categories:
             print(category['category_id'], category['name'])
         category_id = int(input('Enter category id: '))
-        errors.validate_category(category_id, categories,)
-        ############################## добавляем наименование жанра вместо его кода
+        errors.validate_category(category_id, categories)
         selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
-        mongo.save_search('genre', selected_category,)
-        ############################## добавляем наименование жанра вместо его кода
-        #mongo.save_search('genre', category_id,)
+        mongo.save_search('genre', selected_category)
         paginate_movies(lambda limit, offset:
-                db.search_by_category(category_id, limit, offset,))
+                db.search_by_category(category_id, limit, offset))
 
 
 @logger_decorator
@@ -114,11 +111,11 @@ def handle_search_year_movies():
         start_year = int(input('Enter start year: '))
         end_year = int(input('Enter end year: '))
         errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
-        mongo.save_search('year',{'start_year': start_year, 'end_year': end_year,})
+        mongo.save_search('year',{'start_year': start_year, 'end_year': end_year})
         categories = db.get_categories()
         first_category = categories[0]['category_id']
         paginate_movies(lambda limit, offset:
-                db.search_by_category_and_year(first_category, start_year, end_year, limit, offset,))
+                db.search_by_category_and_year(first_category, start_year, end_year, limit, offset))
 
 
 @logger_decorator
@@ -128,12 +125,12 @@ def handle_search_movies():
         for category in categories:
             print(category['category_id'], category['name'])
         category_id = int(input('Enter category id: '))
-        errors.validate_category(category_id, categories,)
+        errors.validate_category(category_id, categories)
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
         start_year = int(input('Enter start year: '))
         end_year = int(input('Enter end year: '))
-        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
+        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'])
         selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
         mongo.save_search('genre_year',{
                 'category': selected_category,
@@ -142,7 +139,7 @@ def handle_search_movies():
             }
         )
         paginate_movies(lambda limit, offset:
-                db.search_by_category_and_year(category_id, start_year, end_year, limit, offset,))
+                db.search_by_category_and_year(category_id, start_year, end_year, limit, offset))
 
 
 @logger_decorator
@@ -150,18 +147,6 @@ def handle_popular_top_queries():
     with MongoDB() as mongo:
         searches = mongo.get_top_searches()
         print_popular_searches(searches)
-        # # if not searches:
-        # #     print('Search history for the top movies is empty.')
-        # #     return
-        # for search in searches:
-        #     print(
-        #         f"Type: "
-        #         f"{search['_id']['search_type']} | "
-        #         f"Value: "
-        #         f"{search['_id']['value']} | "
-        #         f"Count: "
-        #         f"{search['count']}"
-        #     )
 
 
 @logger_decorator
@@ -169,15 +154,6 @@ def handle_popular_last_queries():
     with MongoDB() as mongo:
         searches = mongo.get_recent_searches()
         print_popular_searches(searches)
-        # # if not searches:
-        # #     print('Search history for the popular movies is empty.')
-        # #     return
-        # for search in searches:
-        #     print(
-        #         f"Type: {search['search_type']} | "
-        #         f"Value: {search['value']} | "
-        #         f"Date: {search['created_at']}"
-        #     )
 
 
 menu_config = {
@@ -186,24 +162,24 @@ menu_config = {
         '1': {'text': 'Search movies',
             'submenu': {'title': 'Movies search menu',
                 'items': {
-                    '1': {'text': 'Search by keyword in title', 'action': handle_search_keyword_movies,},
-                    '2': {'text': 'Search by genre', 'action': handle_search_genre_movies,},
-                    '3': {'text': 'Search by year', 'action': handle_search_year_movies,},
-                    '4': {'text': 'Search by genre and year', 'action': handle_search_movies,},
-                    '0': {'text': 'Back', 'action': 'back',},
+                    '1': {'text': 'Search by keyword in title', 'action': handle_search_keyword_movies},
+                    '2': {'text': 'Search by genre', 'action': handle_search_genre_movies},
+                    '3': {'text': 'Search by year', 'action': handle_search_year_movies},
+                    '4': {'text': 'Search by genre and year', 'action': handle_search_movies},
+                    '0': {'text': 'Back', 'action': 'back'},
                          }
                        }
              },
         '2': {'text': 'Popular searches',
             'submenu': {'title': 'Popular searches menu',
                 'items': {
-                    '1': {'text': 'Last 10 searches', 'action': handle_popular_last_queries,},
-                    '2': {'text': 'Top 5 searches', 'action': handle_popular_top_queries,},
-                    '0': {'text': 'Back', 'action': 'back',},
+                    '1': {'text': 'Last 10 searches', 'action': handle_popular_last_queries},
+                    '2': {'text': 'Top 5 searches', 'action': handle_popular_top_queries},
+                    '0': {'text': 'Back', 'action': 'back'},
                          }
                        }
              },
-        '0': {'text': 'Exit', 'action': lambda: sys.exit(0),}
+        '0': {'text': 'Exit', 'action': lambda: sys.exit(0)}
     }
 }
 

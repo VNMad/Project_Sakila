@@ -22,8 +22,8 @@ class DB:
         self.cursor.execute(query, params)
         return self.cursor.fetchall()
 
-    def search_by_keyword(self, keyword, limit, offset,):
-        return self.execute(sql_queries.SEARCH_FILMS_BY_KEYWORD,(f'%{keyword}%', limit, offset,))
+    def search_by_keyword(self, keyword, limit, offset):
+        return self.execute(sql_queries.SEARCH_FILMS_BY_KEYWORD,(f'%{keyword}%', limit, offset))
 
     def get_categories(self):
         return self.execute(sql_queries.GET_CATEGORIES)
@@ -32,9 +32,9 @@ class DB:
         result = self.execute(sql_queries.GET_YEAR_RANGE)
         return result[0]
 
-    def search_by_category_and_year(self, category_id, start_year, end_year, limit, offset,):
+    def search_by_category_and_year(self, category_id, start_year, end_year, limit, offset):
         return self.execute(
-            sql_queries.SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year, limit, offset,))
+            sql_queries.SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year, limit, offset))
 
-    def search_by_category(self, category_id, limit, offset,):
-        return self.execute(sql_queries.SEARCH_BY_CATEGORY,(category_id, limit, offset,))
+    def search_by_category(self, category_id, limit, offset):
+        return self.execute(sql_queries.SEARCH_BY_CATEGORY,(category_id, limit, offset))
