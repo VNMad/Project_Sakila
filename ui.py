@@ -22,9 +22,7 @@ def print_films(films):
             + ('=' * 130)
         )
 
-def paginate_movies(search_function):
-    limit = 10
-    offset = 0
+def paginate_movies(search_function, limit=10, offset=0):
     while True:
         films = search_function(limit, offset)
         if not films:
@@ -108,9 +106,12 @@ def handle_search_year_movies():
     with DB() as db, MongoDB() as mongo:
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
-        start_year = int(input('Enter start year: '))
-        end_year = int(input('Enter end year: '))
-        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
+        start_year, end_year = errors.validate_years_input(
+            input('Enter start year: '),
+            input('Enter end year: '),
+            year_range['min_year'],
+            year_range['max_year']
+        )
         mongo.save_search('year',{'start_year': start_year, 'end_year': end_year})
         categories = db.get_categories()
         first_category = categories[0]['category_id']
@@ -128,9 +129,12 @@ def handle_search_movies():
         errors.validate_category(category_id, categories)
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
-        start_year = int(input('Enter start year: '))
-        end_year = int(input('Enter end year: '))
-        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'])
+        start_year, end_year = errors.validate_years_input(
+            input('Enter start year: '),
+            input('Enter end year: '),
+            year_range['min_year'],
+            year_range['max_year']
+        )
         selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
         mongo.save_search('genre_year',{
                 'category': selected_category,
