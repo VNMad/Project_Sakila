@@ -28,11 +28,6 @@ class MongoDB:
     def get_recent_searches(self):
         return list(self.db.find().sort('created_at', -1).limit(10))
 
-    # def get_top_searches(self):
-    #     pipeline = [{'$group': {'_id': '$value', 'count': {'$sum': 1}, }},
-    #                 {'$sort': {'count': -1}}, {'$limit': 5}]
-    #     return list(self.db.aggregate(pipeline))
-
     def get_top_searches(self):
         pipeline = [{'$group': {'_id': {'search_type': '$search_type','value': '$value',},
                                 'count': {'$sum': 1},}},

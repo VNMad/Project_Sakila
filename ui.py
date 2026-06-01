@@ -2,7 +2,7 @@ import sys
 
 from mysql_client import DB
 from mongo_client import MongoDB
-from logger import logger_decorator
+from logger_sakila import logger_decorator
 import errors
 
 
