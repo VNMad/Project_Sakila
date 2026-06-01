@@ -113,10 +113,7 @@ def handle_search_year_movies():
             year_range['max_year']
         )
         mongo.save_search('year',{'start_year': start_year, 'end_year': end_year})
-        categories = db.get_categories()
-        first_category = categories[0]['category_id']
-        paginate_movies(lambda limit, offset:
-                db.search_by_category_and_year(first_category, start_year, end_year, limit, offset))
+        paginate_movies(lambda limit, offset: db.search_by_year(start_year, end_year, limit, offset))
 
 
 @logger_decorator

@@ -29,8 +29,11 @@ class DB:
         return self.execute(sql_queries.GET_CATEGORIES)
 
     def get_year_range(self):
-        result = self.execute(sql_queries.GET_YEAR_RANGE)
-        return result[0]
+        year_range, = self.execute(sql_queries.GET_YEAR_RANGE)
+        return year_range
+
+    def search_by_year(self, start_year, end_year, limit, offset):
+        return self.execute(sql_queries.SEARCH_BY_YEAR,(start_year, end_year, limit, offset))
 
     def search_by_category_and_year(self, category_id, start_year, end_year, limit, offset):
         return self.execute(
