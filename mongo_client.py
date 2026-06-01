@@ -1,13 +1,13 @@
 from datetime import datetime
 from pymongo import MongoClient
-from settings import MONGO_URI
+from settings import *
 
 
 class MongoDB:
 
     def __init__(self):
         self.client = MongoClient(MONGO_URI)
-        self.db = self.client['ich_edit']['final_project_121225ptm_vnmad']
+        self.db = self.client[MONGO_DATABASE][MONGO_COLLECTION]
 
     def __enter__(self):
         return self
