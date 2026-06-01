@@ -289,3 +289,6 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm
 # Default ignored files
 /.idea/
+
+main_test.py
+ui_test.py

@@ -3,7 +3,7 @@ import sys
 from mysql_client import DB
 from mongo_client import MongoDB
 from logger import logger_decorator
-from errors import *
+import errors
 
 
 def print_films(films):
@@ -96,7 +96,7 @@ def handle_search_genre_movies():
         for category in categories:
             print(category['category_id'], category['name'])
         category_id = int(input('Enter category id: '))
-        validate_category(category_id, categories,)
+        errors.validate_category(category_id, categories,)
         ############################## добавляем наименование жанра вместо его кода
         selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
         mongo.save_search('genre', selected_category,)
@@ -113,7 +113,7 @@ def handle_search_year_movies():
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
         start_year = int(input('Enter start year: '))
         end_year = int(input('Enter end year: '))
-        validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
+        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
         mongo.save_search('year',{'start_year': start_year, 'end_year': end_year,})
         categories = db.get_categories()
         first_category = categories[0]['category_id']
@@ -128,12 +128,12 @@ def handle_search_movies():
         for category in categories:
             print(category['category_id'], category['name'])
         category_id = int(input('Enter category id: '))
-        validate_category(category_id, categories,)
+        errors.validate_category(category_id, categories,)
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
         start_year = int(input('Enter start year: '))
         end_year = int(input('Enter end year: '))
-        validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
+        errors.validate_years(start_year, end_year, year_range['min_year'], year_range['max_year'],)
         selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
         mongo.save_search('genre_year',{
                 'category': selected_category,

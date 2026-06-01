@@ -2,7 +2,7 @@
 import pymysql
 from pymysql.cursors import DictCursor
 from settings import MYSQL_CONFIG
-from sql_queries import *
+import sql_queries
 
 
 class DB:
@@ -23,18 +23,18 @@ class DB:
         return self.cursor.fetchall()
 
     def search_by_keyword(self, keyword, limit, offset,):
-        return self.execute(SEARCH_FILMS_BY_KEYWORD,(f'%{keyword}%', limit, offset,))
+        return self.execute(sql_queries.SEARCH_FILMS_BY_KEYWORD,(f'%{keyword}%', limit, offset,))
 
     def get_categories(self):
-        return self.execute(GET_CATEGORIES)
+        return self.execute(sql_queries.GET_CATEGORIES)
 
     def get_year_range(self):
-        result = self.execute(GET_YEAR_RANGE)
+        result = self.execute(sql_queries.GET_YEAR_RANGE)
         return result[0]
 
     def search_by_category_and_year(self, category_id, start_year, end_year, limit, offset,):
         return self.execute(
-            SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year, limit, offset,))
+            sql_queries.SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year, limit, offset,))
 
     def search_by_category(self, category_id, limit, offset,):
-        return self.execute(SEARCH_BY_CATEGORY,(category_id, limit, offset,))
+        return self.execute(sql_queries.SEARCH_BY_CATEGORY,(category_id, limit, offset,))
