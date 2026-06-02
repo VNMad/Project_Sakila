@@ -1,4 +1,8 @@
-"""Application user interface and menu handling."""
+"""
+User interface module.
+Contains menu system, movie search handlers,
+pagination and search history display.
+"""
 
 import sys
 
@@ -9,7 +13,11 @@ import errors
 
 
 def print_films(films: list[dict]) -> None:
-    """Print movie information."""
+    """
+        Display movies in readable format.
+        Args: films: List of movies.
+        Returns: None
+        """
     if not films:
         print('No movies found for your request.')
         return
@@ -26,7 +34,13 @@ def print_films(films: list[dict]) -> None:
         )
 
 def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
-    """Display movies page by page."""
+    """
+        Display search results page by page.
+        Args: search_function: Search callback function.
+                        limit: Records per page.
+                       offset: Initial offset.
+        Returns: None
+        """
     while True:
         films = search_function(limit, offset)
         if not films:
@@ -40,7 +54,14 @@ def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
         offset += limit
 
 def print_popular_searches(searches: list[dict]) -> None:
-    """Print search statistics."""
+    """
+        Display search statistics.
+        Supports:
+        - recent searches
+        - top searches
+        Args:  searches:  Search data from MongoDB.
+        Returns: None
+        """
     if not searches:
         print('Search history is empty.')
         return
@@ -85,7 +106,12 @@ def print_popular_searches(searches: list[dict]) -> None:
 
 @logger_decorator
 def handle_search_keyword_movies() -> None:
-    """Search movies by keyword."""
+    """
+        Handle movie search by keyword.
+        Saves search history and displays
+        matching movies with pagination.
+        Returns: None
+        """
     keyword = input('Enter keyword: ').strip()
     with DB() as db, MongoDB() as mongo:
         mongo.save_search('keyword', keyword,)
@@ -95,7 +121,12 @@ def handle_search_keyword_movies() -> None:
 
 @logger_decorator
 def handle_search_genre_movies() -> None:
-    """Search movies by genre."""
+    """
+        Handle movie search by genre.
+        Saves search history and displays
+        matching movies with pagination.
+        Returns: None
+        """
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
         for category in categories:
@@ -110,7 +141,12 @@ def handle_search_genre_movies() -> None:
 
 @logger_decorator
 def handle_search_year_movies() -> None:
-    """Search movies by year range."""
+    """
+        Handle movie search by year range.
+        Saves search history and displays
+        matching movies with pagination.
+        Returns: None
+        """
     with DB() as db, MongoDB() as mongo:
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
@@ -126,7 +162,12 @@ def handle_search_year_movies() -> None:
 
 @logger_decorator
 def handle_search_movies() -> None:
-    """Search movies by genre and year."""
+    """
+        Handle movie search by genre and year range.
+        Saves search history and displays
+        matching movies with pagination.
+        Returns: None
+        """
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
         for category in categories:
@@ -154,7 +195,13 @@ def handle_search_movies() -> None:
 
 @logger_decorator
 def handle_popular_top_queries() -> None:
-    """Show top searched requests."""
+    """
+    Display the most popular search requests.
+    Retrieves aggregated search statistics from
+    MongoDB and displays the five most frequently
+    used search queries.
+    Returns: None
+    """
     with MongoDB() as mongo:
         searches = mongo.get_top_searches()
         print_popular_searches(searches)
@@ -162,7 +209,13 @@ def handle_popular_top_queries() -> None:
 
 @logger_decorator
 def handle_popular_last_queries() -> None:
-    """Show latest search requests."""
+    """
+        Display recent search history.
+        Retrieves the latest search requests from
+        MongoDB and displays them in reverse
+        chronological order.
+        Returns: None
+        """
     with MongoDB() as mongo:
         searches = mongo.get_recent_searches()
         print_popular_searches(searches)
@@ -197,7 +250,13 @@ menu_config = {
 
 
 def run_menu(config: dict) -> None:
-    """Run interactive application menu."""
+    """
+        Run interactive menu system.
+        Supports nested menus using stack-based
+        navigation.
+        Args: config: Menu configuration dictionary.
+        Returns: None
+        """
     stack = [config]
     while stack:
         current_menu = stack[-1]
