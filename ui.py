@@ -1,3 +1,5 @@
+"""Application user interface and menu handling."""
+
 import sys
 
 from mysql_client import DB
@@ -6,7 +8,8 @@ from logger_sakila import logger_decorator
 import errors
 
 
-def print_films(films):
+def print_films(films: list[dict]) -> None:
+    """Print movie information."""
     if not films:
         print('No movies found for your request.')
         return
@@ -22,7 +25,8 @@ def print_films(films):
             + ('=' * 130)
         )
 
-def paginate_movies(search_function, limit=10, offset=0):
+def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
+    """Display movies page by page."""
     while True:
         films = search_function(limit, offset)
         if not films:
@@ -35,7 +39,8 @@ def paginate_movies(search_function, limit=10, offset=0):
             break
         offset += limit
 
-def print_popular_searches(searches):
+def print_popular_searches(searches: list[dict]) -> None:
+    """Print search statistics."""
     if not searches:
         print('Search history is empty.')
         return
@@ -79,7 +84,8 @@ def print_popular_searches(searches):
         )
 
 @logger_decorator
-def handle_search_keyword_movies():
+def handle_search_keyword_movies() -> None:
+    """Search movies by keyword."""
     keyword = input('Enter keyword: ').strip()
     with DB() as db, MongoDB() as mongo:
         mongo.save_search('keyword', keyword,)
@@ -88,7 +94,8 @@ def handle_search_keyword_movies():
 
 
 @logger_decorator
-def handle_search_genre_movies():
+def handle_search_genre_movies() -> None:
+    """Search movies by genre."""
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
         for category in categories:
@@ -102,7 +109,8 @@ def handle_search_genre_movies():
 
 
 @logger_decorator
-def handle_search_year_movies():
+def handle_search_year_movies() -> None:
+    """Search movies by year range."""
     with DB() as db, MongoDB() as mongo:
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
@@ -117,7 +125,8 @@ def handle_search_year_movies():
 
 
 @logger_decorator
-def handle_search_movies():
+def handle_search_movies() -> None:
+    """Search movies by genre and year."""
     with DB() as db, MongoDB() as mongo:
         categories = db.get_categories()
         for category in categories:
@@ -144,14 +153,16 @@ def handle_search_movies():
 
 
 @logger_decorator
-def handle_popular_top_queries():
+def handle_popular_top_queries() -> None:
+    """Show top searched requests."""
     with MongoDB() as mongo:
         searches = mongo.get_top_searches()
         print_popular_searches(searches)
 
 
 @logger_decorator
-def handle_popular_last_queries():
+def handle_popular_last_queries() -> None:
+    """Show latest search requests."""
     with MongoDB() as mongo:
         searches = mongo.get_recent_searches()
         print_popular_searches(searches)
@@ -185,7 +196,8 @@ menu_config = {
 }
 
 
-def run_menu(config):
+def run_menu(config: dict) -> None:
+    """Run interactive application menu."""
     stack = [config]
     while stack:
         current_menu = stack[-1]

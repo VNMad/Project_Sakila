@@ -1,3 +1,5 @@
+"""Logging and exception handling decorators."""
+
 import logging
 from functools import wraps
 
@@ -20,6 +22,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def logger_decorator(func):
+    """
+    Log application errors and display
+    user-friendly messages.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
