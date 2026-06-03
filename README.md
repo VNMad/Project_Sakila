@@ -54,14 +54,14 @@ Install dependencies:
 ```pip install pymysql pymongo python-dotenv```
 
 ## Environment Variables
-Create .env file:
-DB_HOST=...
-DB_USER=...
-DB_PASSWORD=...
+Create .env file:  
+DB_HOST=your_host  
+DB_USER=your_username  
+DB_PASSWORD=your_password  
 
-MONGO_URI=...
-MONGO_DATABASE=...
-MONGO_COLLECTION=...
+MONGO_URI=your_link  
+MONGO_DATABASE=your_db  
+MONGO_COLLECTION=your_collection  
 
 ## Run
 ```bash ```
