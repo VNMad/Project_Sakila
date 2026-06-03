@@ -62,19 +62,20 @@ class MongoDB:
             }
         )
 
-    def get_recent_searches(self) -> list[dict]:
+    def get_recent_searches(self, limit: int = 10) -> list[dict]:
         """
         Retrieve latest search requests.
+        Args: limit:  Maximum number of recent searches to return.
         Returns: List of recent searches.
         """
-        return list(self.db.find().sort('created_at', -1).limit(10))
+        return list(self.db.find().sort('created_at', -1).limit(limit))
 
-    def get_top_searches(self) -> list[dict]:
+    def get_top_searches(self, limit: int = 5) -> list[dict]:
         """
         Retrieve most popular search requests.
-        Returns: List of top searches with usage count.
+        Args:  limit:   Maximum number of top searches to return.
+        Returns:    List of top searches with usage count.
         """
-        pipeline = [{'$group': {'_id': {'search_type': '$search_type','value': '$value'},
-                                'count': {'$sum': 1},}},
-                    {'$sort': {'count': -1}}, {'$limit': 5}]
+        pipeline = [{'$group': {'_id': {'search_type': '$search_type', 'value': '$value'},
+                                'count': {'$sum': 1}}}, {'$sort': {'count': -1}}, {'$limit': limit}]
         return list(self.db.aggregate(pipeline))
