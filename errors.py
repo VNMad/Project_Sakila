@@ -31,7 +31,7 @@ def validate_category(category_id: int, categories: list[dict]) -> None:
             categories: Available categories.
     Raises: CategoryNotFoundError
     """
-    if category_id not in [category['category_id'] for category in categories]:
+    if not any(category['category_id'] == category_id for category in categories):
         raise CategoryNotFoundError('Category does not exist.')
 
 
