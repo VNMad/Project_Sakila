@@ -29,6 +29,7 @@ def print_films(films: list[dict]) -> None:
             + f"Year        : {film['release_year']}\n"
             + f"Category    : {film['categories']}\n"
             + f"Language    : {film['language_name']}\n"
+            + f"Actors      : {film['actors']}\n"
             + f"Description : {film['description']}\n"
             + ('=' * 130)
         )
