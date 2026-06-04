@@ -223,7 +223,8 @@ def handle_popular_last_queries() -> None:
 
 
 menu_config = {
-    'title': 'Main menu',
+    'title': """Welcome to the Sakila application !
+            Main menu""",
     'items': {
         '1': {'text': 'Search movies',
             'submenu': {'title': 'Movies search menu',

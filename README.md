@@ -26,25 +26,38 @@ The project uses:
 
 project/
 
-├── main.py
+├── main.py  
+Application entry point. Starts the interactive menu system.
 
-├── ui.py
+├── ui.py  
+User interface module. Contains menu navigation, movie search handlers, pagination logic, and search history display.
 
-├── mysql_client.py
+├── mysql_client.py  
+MySQL database client. Handles connections, query execution, and movie search operations in the Sakila database.  
 
 ├── mongo_client.py
+MongoDB client. Stores search history and provides statistics for recent and popular searches.  
 
-├── sql_queries.py
+├── sql_queries.py  
+Collection of SQL queries used by the application. Separates SQL code from business logic.
 
-├── errors.py
+├── errors.py  
+Custom exceptions and input validation functions for categories, years, and search parameters.  
 
-├── logger_sakila.py
+├── logger_sakila.py  
+Logging and centralized error handling module. Provides a decorator for exception handling and logging.  
 
 ├── settings.py
+Application configuration module. Loads environment variables and database settings.  
 
 ├── .env
+Environment variables file containing database credentials and connection settings.  
 
 └── README.md
+Project documentation, installation instructions, and usage guide.
+
+
+
 
 ## Installation
 
