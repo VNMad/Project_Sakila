@@ -72,31 +72,10 @@ def paginate_movies(search_function, total_movies: int, limit: int = 10, offset:
             f'Showing {start_record}-{end_record} '
             f'of {total_movies} movies\n'
         )
-        if current_page >= total_pages:
-            break
-        answer = input('Show next page? y/n: ').lower()
-        if answer != 'y':
+        if current_page >= total_pages or input('Show next page? y/n: ').lower() != 'y':
             break
         offset += limit
-# def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
-#     """
-#         Display search results page by page.
-#         Args: search_function: Search callback function.
-#                         limit: Records per page.
-#                        offset: Initial offset.
-#         Returns: None
-#         """
-#     while True:
-#         films = search_function(limit, offset)
-#         if not films:
-#             if offset == 0:
-#                 print('No movies found for your request..')
-#             break
-#         print_films(films)
-#         answer = input('Show next page? y/n: ').lower()
-#         if answer != 'y':
-#             break
-#         offset += limit
+
 
 def print_popular_searches(searches: list[dict]) -> None:
     """
