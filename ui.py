@@ -5,11 +5,13 @@ pagination and search history display.
 """
 
 import sys
+import math
 
 from mysql_client import DB
 from mongo_client import MongoDB
 from logger_sakila import logger_decorator
 import errors
+
 
 
 def print_films(films: list[dict]) -> None:
@@ -34,25 +36,67 @@ def print_films(films: list[dict]) -> None:
             + ('=' * 130)
         )
 
-def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
+def paginate_movies(search_function, total_movies: int, limit: int = 10, offset: int = 0) -> None:
     """
-        Display search results page by page.
-        Args: search_function: Search callback function.
-                        limit: Records per page.
-                       offset: Initial offset.
-        Returns: None
+        Display movies using pagination.
+
+        Shows search results page by page and
+        displays pagination information including
+        current page number, total pages, and
+        record range.
+        Args: search_function: Callback function used
+                to retrieve movies from database.
+            total_movies: Total number of movies
+                matching the search criteria.
+            limit: Number of movies displayed
+                per page.
+            offset: Starting position for
+                database query.
+        Returns:
+            None
         """
     while True:
         films = search_function(limit, offset)
         if not films:
             if offset == 0:
-                print('No movies found for your request..')
+                print('No movies found for your request.')
             break
+        current_page = offset // limit + 1
+        total_pages = math.ceil(total_movies / limit)
+        start_record = offset + 1
+        end_record = min(offset + len(films), total_movies)
+
         print_films(films)
+        print(
+            f'\nPage {current_page} of {total_pages}\n'
+            f'Showing {start_record}-{end_record} '
+            f'of {total_movies} movies\n'
+        )
+        if current_page >= total_pages:
+            break
         answer = input('Show next page? y/n: ').lower()
         if answer != 'y':
             break
         offset += limit
+# def paginate_movies(search_function, limit: int = 10, offset: int = 0) -> None:
+#     """
+#         Display search results page by page.
+#         Args: search_function: Search callback function.
+#                         limit: Records per page.
+#                        offset: Initial offset.
+#         Returns: None
+#         """
+#     while True:
+#         films = search_function(limit, offset)
+#         if not films:
+#             if offset == 0:
+#                 print('No movies found for your request..')
+#             break
+#         print_films(films)
+#         answer = input('Show next page? y/n: ').lower()
+#         if answer != 'y':
+#             break
+#         offset += limit
 
 def print_popular_searches(searches: list[dict]) -> None:
     """
@@ -98,6 +142,7 @@ def print_popular_searches(searches: list[dict]) -> None:
             f"{separator}"
         )
 
+
 @logger_decorator
 def handle_search_keyword_movies() -> None:
     """
@@ -109,8 +154,9 @@ def handle_search_keyword_movies() -> None:
     keyword = input('Enter keyword: ').strip()
     with DB() as db, MongoDB() as mongo:
         mongo.save_search('keyword', keyword,)
-        paginate_movies(lambda limit, offset:
-                db.search_by_keyword(keyword, limit, offset))
+        total_movies = db.count_movies_by_keyword(keyword)
+        paginate_movies(lambda limit, offset: db.search_by_keyword(keyword, limit, offset),
+                        total_movies)
 
 
 @logger_decorator
@@ -130,8 +176,9 @@ def handle_search_genre_movies() -> None:
         selected_category = next(category['name'] for category in categories
                                  if category['category_id'] == category_id)
         mongo.save_search('genre', selected_category)
-        paginate_movies(lambda limit, offset:
-                db.search_by_category(category_id, limit, offset))
+        total_movies = db.count_movies_by_category(category_id)
+        paginate_movies(lambda limit, offset: db.search_by_category(category_id, limit, offset),
+                        total_movies)
 
 
 @logger_decorator
@@ -152,8 +199,9 @@ def handle_search_year_movies() -> None:
             year_range['max_year']
         )
         mongo.save_search('year',{'start_year': start_year, 'end_year': end_year})
-        paginate_movies(lambda limit, offset: db.search_by_year(start_year, end_year,
-                                              limit, offset))
+        total_movies = db.count_movies_by_year(start_year, end_year)
+        paginate_movies(lambda limit, offset: db.search_by_year(start_year, end_year, limit,offset),
+                        total_movies)
 
 
 @logger_decorator
@@ -186,8 +234,9 @@ def handle_search_movies() -> None:
                 'end_year': end_year,
             }
         )
-        paginate_movies(lambda limit, offset:
-                db.search_by_category_and_year(category_id, start_year, end_year, limit, offset))
+        total_movies = db.count_movies_by_category_and_year(category_id, start_year, end_year)
+        paginate_movies(lambda limit, offset: db.search_by_category_and_year(category_id,
+                                              start_year, end_year, limit, offset), total_movies)
 
 
 @logger_decorator
@@ -219,8 +268,12 @@ def handle_popular_last_queries() -> None:
 
 
 menu_config = {
-    'title': """Welcome to the Sakila application !
-            Main menu""",
+    'title': """
+##########################################
+    Welcome to the Sakila application !
+##########################################
+            Main menu
+            """,
     'items': {
         '1': {'text': 'Search movies',
             'submenu': {'title': 'Movies search menu',
@@ -261,7 +314,7 @@ def run_menu(config: dict) -> None:
         print(f'\n{current_menu["title"]}')
         for key, value in current_menu['items'].items():
             print(f'{key}. {value["text"]}')
-        choice = input('Choose menu item: ')
+        choice = input('\n Choose menu item: ')
         if choice in current_menu['items']:
             menu_item = current_menu['items'][choice]
             if menu_item.get('action') == 'back':

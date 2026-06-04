@@ -123,3 +123,41 @@ class DB:
          Returns: List of movies.
          """
         return self.execute(sql_queries.SEARCH_BY_CATEGORY,(category_id, limit, offset))
+
+    def count_movies_by_keyword(self, keyword: str) -> int:
+        """
+        Count movies matching keyword search.
+        Args: keyword: Keyword used to search movie titles.
+        Returns: Total number of matching movies.
+        """
+        return self.execute(sql_queries.COUNT_FILMS_BY_KEYWORD,(f'%{keyword}%',))[0]['count']
+
+    def count_movies_by_category(self, category_id: int) -> int:
+        """
+        Count movies in selected category.
+        Args: category_id: Movie category identifier.
+        Returns: Total number of movies in category.
+        """
+        return self.execute(sql_queries.COUNT_FILMS_BY_CATEGORY,(category_id,))[0]['count']
+
+    def count_movies_by_year(self, start_year: int, end_year: int) -> int:
+        """
+        Count movies within year range.
+        Args: start_year: Beginning of year range.
+              end_year: End of year range.
+        Returns: Total number of matching movies.
+        """
+        return self.execute(sql_queries.COUNT_FILMS_BY_YEAR,(start_year, end_year))[0]['count']
+
+    def count_movies_by_category_and_year(self, category_id: int,
+                                          start_year: int, end_year: int) -> int:
+        """
+        Count movies matching category and
+        year range filters.
+        Args: category_id: Movie category identifier.
+               start_year: Beginning of year range.
+                 end_year: End of year range.
+        Returns: Total number of matching movies.
+        """
+        return self.execute(sql_queries.COUNT_FILMS_BY_CATEGORY_AND_YEAR,
+                            (category_id, start_year, end_year))[0]['count']

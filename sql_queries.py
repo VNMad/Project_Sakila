@@ -80,3 +80,31 @@ GROUP BY f.film_id, f.title, f.release_year, f.length, lang.name, f.description
 ORDER BY f.release_year DESC
 LIMIT %s OFFSET %s
 """
+
+COUNT_FILMS_BY_KEYWORD = """
+SELECT COUNT(DISTINCT f.film_id) AS count
+FROM film AS f
+WHERE f.title LIKE %s
+"""
+
+COUNT_FILMS_BY_CATEGORY = """
+SELECT COUNT(*) AS count
+FROM film_category
+WHERE category_id = %s
+"""
+
+COUNT_FILMS_BY_YEAR = """
+SELECT COUNT(*) AS count
+FROM film
+WHERE release_year BETWEEN %s AND %s
+"""
+
+COUNT_FILMS_BY_CATEGORY_AND_YEAR = """
+SELECT COUNT(*) AS count
+FROM film AS f
+JOIN film_category AS fc
+    ON f.film_id = fc.film_id
+WHERE fc.category_id = %s
+AND f.release_year BETWEEN %s AND %s
+"""
+
