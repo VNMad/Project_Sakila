@@ -102,8 +102,7 @@ WHERE release_year BETWEEN %s AND %s
 COUNT_FILMS_BY_CATEGORY_AND_YEAR = """
 SELECT COUNT(*) AS count
 FROM film AS f
-JOIN film_category AS fc
-    ON f.film_id = fc.film_id
+JOIN film_category AS fc ON f.film_id = fc.film_id
 WHERE fc.category_id = %s
 AND f.release_year BETWEEN %s AND %s
 """

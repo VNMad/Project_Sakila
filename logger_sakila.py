@@ -38,20 +38,9 @@ def logger_decorator(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except MoviesPublishedYearError as e:
-            logger.error(e)
-            print(e)
-        except InvalidYearRangeError as e:
-            logger.error(e)
-            print(e)
-        except CategoryNotFoundError as e:
-            logger.error(e)
-            print(e)
-        except InvalidCategoryInputError as e:
-            logger.error(e)
-            print(e)
-        except InvalidMenuChoiceError as e:
-            logger.error(e)
+        except (MoviesPublishedYearError, InvalidYearRangeError, CategoryNotFoundError,
+                InvalidCategoryInputError, InvalidMenuChoiceError) as e:
+            logger.error('%s: %s', type(e).__name__, e)
             print(e)
         except MySQLError as e:
             logger.exception(e)
