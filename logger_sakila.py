@@ -11,7 +11,7 @@ from pymysql import MySQLError
 from pymongo import errors as mongo_errors
 
 from errors import (MoviesPublishedYearError, CategoryNotFoundError,
-                    InvalidMenuChoiceError, InvalidYearRangeError)
+                    InvalidMenuChoiceError, InvalidYearRangeError, InvalidCategoryInputError)
 
 
 logging.basicConfig(
@@ -45,6 +45,9 @@ def logger_decorator(func):
             logger.error(e)
             print(e)
         except CategoryNotFoundError as e:
+            logger.error(e)
+            print(e)
+        except InvalidCategoryInputError as e:
             logger.error(e)
             print(e)
         except InvalidMenuChoiceError as e:

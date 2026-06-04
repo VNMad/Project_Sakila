@@ -129,7 +129,7 @@ def handle_search_genre_movies() -> None:
         categories = db.get_categories()
         for category in categories:
             print(category['category_id'], category['name'])
-        category_id = int(input('Enter category id: '))
+        category_id = errors.validate_category_input(input('Enter category id: '))
         errors.validate_category(category_id, categories)
         selected_category = next(category['name'] for category in categories
                                  if category['category_id'] == category_id)
@@ -172,7 +172,7 @@ def handle_search_movies() -> None:
         categories = db.get_categories()
         for category in categories:
             print(category['category_id'], category['name'])
-        category_id = int(input('Enter category id: '))
+        category_id = errors.validate_category_input(input('Enter category id: '))
         errors.validate_category(category_id, categories)
         year_range = db.get_year_range()
         print('Available years:', year_range['min_year'],'-', year_range['max_year'])
@@ -262,7 +262,7 @@ def run_menu(config: dict) -> None:
     while stack:
         current_menu = stack[-1]
         print(f'\n{current_menu["title"]}')
-        for key, value in (current_menu['items'].items()):
+        for key, value in current_menu['items'].items():
             print(f'{key}. {value["text"]}')
         choice = input('Choose menu item: ')
         if choice in current_menu['items']:

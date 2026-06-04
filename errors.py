@@ -12,6 +12,10 @@ class CategoryNotFoundError(Exception):
     """Raised when category does not exist."""
 
 
+class InvalidCategoryInputError(Exception):
+    """Raised when category id is not numeric."""
+
+
 class InvalidMenuChoiceError(Exception):
     """Raised when menu item is invalid."""
 
@@ -29,6 +33,19 @@ def validate_category(category_id: int, categories: list[dict]) -> None:
     """
     if not any(category['category_id'] == category_id for category in categories):
         raise CategoryNotFoundError('Category does not exist.')
+
+
+def validate_category_input(category_input: str) -> int:
+    """
+    Convert category input to integer.
+    Args: category_input: User entered value.
+    Returns: Category identifier.
+    Raises:  InvalidCategoryInputError
+    """
+    try:
+        return int(category_input)
+    except ValueError as e:
+        raise InvalidCategoryInputError('Category id must be a number.') from e
 
 
 def validate_year_range(start_year: int, end_year: int) -> None:
