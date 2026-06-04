@@ -71,16 +71,11 @@ def print_popular_searches(searches: list[dict]) -> None:
             search_type = search['_id']['search_type']
             value = search['_id']['value']
             extra_info = f'Count: {search['count']}'
-
         else:
             search_type = search['search_type']
             value = search['value']
             extra_info = f'Date: {search['created_at'].strftime('%Y-%m-%d %H:%M')}'
-        if search_type == 'keyword':
-            formatted_value = value
-        elif search_type == 'genre':
-            formatted_value = value
-        elif search_type == 'year':
+        if search_type == 'year':
             formatted_value = (
                 f"{value['start_year']} - "
                 f"{value['end_year']}"
