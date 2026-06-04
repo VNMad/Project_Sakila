@@ -1,3 +1,9 @@
+"""
+SQL queries for Sakila database.
+Contains all raw SQL queries used by the DB client
+for filtering, searching, and retrieving movie data.
+"""
+
 GET_CATEGORIES = """
 SELECT category_id, name
 FROM category

@@ -22,6 +22,12 @@ class DB:
     - retrieving available year range
     Supports context manager protocol.
     """
+
+    def __init__(self) -> None:
+        """Initialize database attributes."""
+        self.conn = None
+        self.cursor = None
+
     def __enter__(self) -> "DB":
         """
         Open database connection.
@@ -30,7 +36,6 @@ class DB:
         """
         self.conn = pymysql.connect(**MYSQL_CONFIG, cursorclass=DictCursor)
         self.cursor = self.conn.cursor()
-
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
@@ -93,8 +98,9 @@ class DB:
             """
         return self.execute(sql_queries.SEARCH_BY_YEAR,(start_year, end_year, limit, offset))
 
-    def search_by_category_and_year(self, category_id: int, start_year: int, end_year: int, limit: int,
-                                    offset: int) -> list[dict]:
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
+    def search_by_category_and_year(self, category_id: int, start_year: int, end_year: int,
+                                                limit: int, offset: int) -> list[dict]:
         """
             Search movies by category and year range.
             Args: category_id: Category identifier.
@@ -105,7 +111,8 @@ class DB:
             Returns: List of movies.
             """
         return self.execute(
-            sql_queries.SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year, limit, offset))
+            sql_queries.SEARCH_BY_CATEGORY_AND_YEAR,(category_id, start_year, end_year,
+                                                                   limit, offset))
 
     def search_by_category(self, category_id: int, limit: int, offset: int) -> list[dict]:
         """

@@ -10,7 +10,8 @@ from functools import wraps
 from pymysql import MySQLError
 from pymongo import errors as mongo_errors
 
-from errors import (MoviesPublishedYearError, CategoryNotFoundError, InvalidMenuChoiceError, InvalidYearRangeError)
+from errors import (MoviesPublishedYearError, CategoryNotFoundError,
+                    InvalidMenuChoiceError, InvalidYearRangeError)
 
 
 logging.basicConfig(
@@ -61,7 +62,8 @@ def logger_decorator(func):
         except mongo_errors.PyMongoError as e:
             logger.exception(e)
             print('MongoDB error.')
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-exception-caught
             logger.exception(e)
             print('Unexpected system error.')
+        return None
     return wrapper

@@ -1,3 +1,9 @@
+"""
+Project configuration module.
+Loads environment variables from a .env file and
+defines connection settings for MySQL and MongoDB.
+"""
+
 import os
 
 from dotenv import load_dotenv

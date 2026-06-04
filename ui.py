@@ -131,7 +131,8 @@ def handle_search_genre_movies() -> None:
             print(category['category_id'], category['name'])
         category_id = int(input('Enter category id: '))
         errors.validate_category(category_id, categories)
-        selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
+        selected_category = next(category['name'] for category in categories
+                                 if category['category_id'] == category_id)
         mongo.save_search('genre', selected_category)
         paginate_movies(lambda limit, offset:
                 db.search_by_category(category_id, limit, offset))
@@ -155,7 +156,8 @@ def handle_search_year_movies() -> None:
             year_range['max_year']
         )
         mongo.save_search('year',{'start_year': start_year, 'end_year': end_year})
-        paginate_movies(lambda limit, offset: db.search_by_year(start_year, end_year, limit, offset))
+        paginate_movies(lambda limit, offset: db.search_by_year(start_year, end_year,
+                                              limit, offset))
 
 
 @logger_decorator
@@ -180,7 +182,8 @@ def handle_search_movies() -> None:
             year_range['min_year'],
             year_range['max_year']
         )
-        selected_category = next(category['name'] for category in categories if category['category_id'] == category_id)
+        selected_category = next(category['name'] for category in categories
+                                 if category['category_id'] == category_id)
         mongo.save_search('genre_year',{
                 'category': selected_category,
                 'start_year': start_year,
@@ -225,20 +228,20 @@ menu_config = {
         '1': {'text': 'Search movies',
             'submenu': {'title': 'Movies search menu',
                 'items': {
-                    '1': {'text': 'Search by keyword in title', 'action': handle_search_keyword_movies},
-                    '2': {'text': 'Search by genre', 'action': handle_search_genre_movies},
-                    '3': {'text': 'Search by year', 'action': handle_search_year_movies},
-                    '4': {'text': 'Search by genre and year', 'action': handle_search_movies},
-                    '0': {'text': 'Back', 'action': 'back'},
+                '1': {'text': 'Search by keyword in title', 'action': handle_search_keyword_movies},
+                '2': {'text': 'Search by genre', 'action': handle_search_genre_movies},
+                '3': {'text': 'Search by year', 'action': handle_search_year_movies},
+                '4': {'text': 'Search by genre and year', 'action': handle_search_movies},
+                '0': {'text': 'Back', 'action': 'back'},
                          }
                        }
              },
         '2': {'text': 'Popular searches',
             'submenu': {'title': 'Popular searches menu',
-                'items': {
-                    '1': {'text': 'Last 10 searches', 'action': handle_popular_last_queries},
-                    '2': {'text': 'Top 5 searches', 'action': handle_popular_top_queries},
-                    '0': {'text': 'Back', 'action': 'back'},
+                 'items': {
+                 '1': {'text': 'Last 10 searches', 'action': handle_popular_last_queries},
+                 '2': {'text': 'Top 5 searches', 'action': handle_popular_top_queries},
+                 '0': {'text': 'Back', 'action': 'back'},
                          }
                        }
              },
@@ -263,7 +266,7 @@ def run_menu(config: dict) -> None:
             print(f'{key}. {value["text"]}')
         choice = input('Choose menu item: ')
         if choice in current_menu['items']:
-            menu_item = (current_menu['items'][choice])
+            menu_item = current_menu['items'][choice]
             if menu_item.get('action') == 'back':
                 stack.pop()
             elif 'submenu' in menu_item:

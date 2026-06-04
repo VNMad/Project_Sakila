@@ -6,22 +6,18 @@ input validation functions.
 
 class MoviesPublishedYearError(Exception):
     """Raised when movie year is invalid."""
-    pass
 
 
 class CategoryNotFoundError(Exception):
     """Raised when category does not exist."""
-    pass
 
 
 class InvalidMenuChoiceError(Exception):
     """Raised when menu item is invalid."""
-    pass
 
 
 class InvalidYearRangeError(Exception):
     """Raised when start year is greater than end year."""
-    pass
 
 
 def validate_category(category_id: int, categories: list[dict]) -> None:
@@ -77,7 +73,8 @@ def validate_years(start_year: int, end_year: int, min_year: int, max_year: int)
     validate_year_range(start_year, end_year)
 
 
-def validate_years_input(start_year_input: str, end_year_input: str, min_year: int, max_year: int) -> tuple[int, int]:
+def validate_years_input(start_year_input: str, end_year_input: str,
+                        min_year: int, max_year: int) -> tuple[int, int]:
     """
         Convert and validate user year input.
         Converts user input values to integers and
@@ -97,7 +94,7 @@ def validate_years_input(start_year_input: str, end_year_input: str, min_year: i
     try:
         start_year = int(start_year_input)
         end_year = int(end_year_input)
-    except ValueError:
-        raise MoviesPublishedYearError('Year must be a number.')
+    except ValueError as e:
+        raise MoviesPublishedYearError('Year must be a number.') from e
     validate_years(start_year, end_year, min_year, max_year)
     return start_year, end_year
