@@ -1,4 +1,4 @@
-# Movie Search System
+# Movie Searcher "The Best Finder"
 
 ## Description
 
@@ -8,26 +8,26 @@ Console application for searching movies in the Sakila database.
 
 The project uses the following technologies and libraries:
 
-- Python 3.13
-  - Main programming language used to implement the application logic.
+- Python 3.13 
+- - Main programming language used to implement the application logic.
 
-- MySQL
-  - Relational database management system used for storing movie data from the Sakila database.
+- MySQL 
+- - Relational database management system used for storing movie data from the Sakila database.
 
-- MongoDB
-  - NoSQL document-oriented database used for storing search history and search statistics.
+- MongoDB 
+- - NoSQL document-oriented database used for storing search history and search statistics.
 
-- PyMySQL
-  - Python client library used to connect to MySQL and execute SQL queries.
+- PyMySQL 
+- - Python client library used to connect to MySQL and execute SQL queries.
 
-- PyMongo
-  - Official MongoDB driver for Python used to insert, retrieve and aggregate search history data.
+- PyMongo 
+- - Official MongoDB driver for Python used to insert, retrieve and aggregate search history data.
 
-- python-dotenv
-  - Loads environment variables from the `.env` file, allowing sensitive configuration values to be stored outside the source code.
+- python-dotenv 
+- - Loads environment variables from the `.env` file, allowing sensitive configuration values to be stored outside the source code.
 
-- dnspython
-  - DNS toolkit used internally by MongoDB drivers and network-related operations. Provides DNS resolution support for MongoDB connections.
+- dnspython 
+- - DNS toolkit used internally by MongoDB drivers and network-related operations. Provides DNS resolution support for MongoDB connections.
 
 
 ## Features
